@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel del Entrenador - PichilemuTV</title>
+	<style>
+		body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+		h2 { color: #333; }
+		.tarjeta {
+			background: white;
+			padding: 15px;
+			margin-bottom: 10px;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			max-width: 500px;
+		}
+		.etiqueta { font-weight: bold; color: #555; }
+	</style>
+</head>
+<body>
+	<h2>Jugadores Inscritos en la Base de Datos</h2>
+	<div id="contenedor-jugadores">Cargando datos desde el servidor...</div>
+
+	<script>
+		async function cargarJugadores() {
+			const contenedor = document.getElementById('contenedor-jugadores');
+
+			try {
+				const respuesta = await fetch('/api/jugadores');
+				if (!respuesta.ok) throw new Error('Error en la respuesta del servidor');
+
+				const jugadores = await respuesta.json();
+				contenedor.replaceChildren();
+
+				if (!Array.isArray(jugadores) || jugadores.length === 0) {
+					contenedor.textContent = 'No hay jugadores inscritos aún.';
+					return;
+				}
+
+				jugadores.forEach(jugador => {
+					const tarjeta = document.createElement('div');
+					tarjeta.className = 'tarjeta';
+					const perfil = jugador.perfil_deportivo || {};
+					const campos = [
+						['Nombre:', jugador.nombre_completo],
+						['RUT:', jugador.rut],
+						['Deporte:', perfil.deporte],
+						['Posición:', perfil.posicion || 'N/A'],
+						['Dorsal:', perfil.dorsal || 'N/A']
+					];
+
+					campos.forEach(([etiqueta, valor]) => {
+						const parrafo = document.createElement('p');
+						const textoEtiqueta = document.createElement('span');
+						textoEtiqueta.className = 'etiqueta';
+						textoEtiqueta.textContent = `${etiqueta} `;
+						parrafo.append(textoEtiqueta, document.createTextNode(valor ?? 'N/A'));
+						tarjeta.appendChild(parrafo);
+					});
+					contenedor.appendChild(tarjeta);
+				});
+			} catch (error) {
+				contenedor.textContent = 'Error al cargar los datos. Verifica que el servidor (node server.js) esté encendido.';
+			}
+		}
+
+		cargarJugadores();
+	</script>
+</body>
+</html>

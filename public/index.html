@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción Deportiva - Pichilemu</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 15px; }
+        button { padding: 10px; width: 100%; background-color: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Ficha del Jugador</h2>
+    
+    <form id="formularioJugador">
+        <label>Nombre Completo:</label>
+        <input type="text" id="nombre" required>
+
+        <label>RUT:</label>
+        <input type="text" id="rut" required>
+
+        <label>Deporte:</label>
+        <select id="deporte">
+            <option value="Fútbol">Fútbol</option>
+            <option value="Vóleibol">Vóleibol</option>
+            <option value="Surf">Surf</option>
+        </select>
+
+        <label>Posición / Postura:</label>
+        <input type="text" id="posicion" placeholder="Ej: Arquero, Líbero, Goofy">
+
+        <label>Dorsal (N° Camiseta, si aplica):</label>
+        <input type="number" id="dorsal">
+
+        <button type="submit">Guardar en Base de Datos</button>
+    </form>
+
+    <script>
+        // Esto le dice al formulario qué hacer cuando presionas el botón
+        document.getElementById('formularioJugador').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Evita que la página se recargue
+
+            // 1. Recopilar los datos escritos
+            const datosJugador = {
+                nombre_completo: document.getElementById('nombre').value,
+                rut: document.getElementById('rut').value,
+                perfil_deportivo: {
+                    deporte: document.getElementById('deporte').value,
+                    posicion: document.getElementById('posicion').value,
+                    dorsal: document.getElementById('dorsal').value
+                }
+            };
+
+            // 2. Enviar los datos al servidor local (puerto 3000)
+            try {
+                const respuesta = await fetch('/api/jugadores', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosJugador)
+                });
+
+                if (respuesta.ok) {
+                    alert('¡Jugador guardado con éxito en MongoDB Atlas!');
+                    document.getElementById('formularioJugador').reset(); // Limpia el formulario
+                } else {
+                    alert('Hubo un error al guardar. Revisa tu servidor.');
+                }
+            } catch (error) {
+                alert('No se pudo conectar. ¿Está encendido el servidor node server.js?');
+            }
+        });
+    </script>
+</body>
+</html>
