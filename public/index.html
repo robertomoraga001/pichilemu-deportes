@@ -119,8 +119,9 @@
             "6666": "Independiente Pichilemu (CDI)",
             "7777": "Infiernillo",
             "8888": "Marítimos Unidos",
-            "9999": "Unión Cáhuil"
-        };
+        "9999": "Unión Cáhuil",
+    "0591": "Administrador PichilemuTV"
+  };
 
         function validarClave() {
             const claveIngresada = document.getElementById('input-clave').value.trim();
@@ -141,47 +142,3 @@
                 document.getElementById('error-clave').style.display = 'block';
             }
         }
-
-        // Enviar formulario al servidor
-        document.getElementById('form-jugador').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const formData = new FormData();
-            formData.append('nombre_completo', document.getElementById('nombre_completo').value);
-            formData.append('rut', document.getElementById('rut').value);
-            formData.append('ano_nacimiento', document.getElementById('ano_nacimiento').value);
-            formData.append('peso', document.getElementById('peso').value);
-            formData.append('estatura', document.getElementById('estatura').value);
-            formData.append('dorsal', document.getElementById('dorsal').value);
-            formData.append('posicion', document.getElementById('posicion').value);
-            formData.append('deporte', document.getElementById('deporte').value);
-            formData.append('club_deportivo', document.getElementById('club_deportivo').value); // Se envía aunque esté disabled
-            
-            const archivoFoto = document.getElementById('foto').files[0];
-            if (archivoFoto) {
-                formData.append('foto', archivoFoto);
-            }
-
-            try {
-                const response = await fetch('/api/jugadores', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const resultado = await response.json();
-                if (response.ok) {
-                    const alerta = document.getElementById('mensaje-exito');
-                    alerta.style.display = 'block';
-                    alerta.innerText = '¡Ficha y fotografía guardadas con éxito!';
-                    document.getElementById('form-jugador').reset();
-                } else {
-                    alert('Error: ' + resultado.error);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Hubo un problema al conectar con el servidor.');
-            }
-        });
-    </script>
-</body>
-</html>
